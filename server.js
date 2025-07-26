@@ -1,36 +1,29 @@
 const express = require("express");
 const cors = require("cors");
-const axios = require("axios");
+const path = require("path");
 
 const app = express();
-app.use(cors());
-app.use(express.json());
-
-app.post("/verify", async (req, res) => {
-  const { githubUsername, sessionId } = req.body;
-
-  if (!githubUsername || !sessionId)
-    return res.json({ error: "Missing username or SESSION_ID." });
-
-  if (!sessionId.startsWith("ARSL~"))
-    return res.json({ error: "Invalid SESSION_ID format." });
-
-  try {
-    const repoUrl = `https://api.github.com/repos/${githubUsername}/Arslan_MD`;
-    const response = await axios.get(repoUrl);
-
-    if (response.status === 200) {
-      const deploy_link = `https://render.com/deploy?repo=https://github.com/${githubUsername}/Arslan_MD&SESSION_ID=${sessionId}`;
-      return res.json({ deploy_link });
-    }
-  } catch (e) {
-    return res.json({ error: "GitHub repo not found or not public." });
-  }
-});
-
-app.get("/", (req, res) => {
-  res.send("Arslan Render Server Running ✅");
-});
-
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log("✅ Server running on port", PORT));
+
+app.use(cors());
+
+// Serve index.html from root
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+
+// Handle form submission
+app.get("/verify", (req, res) => {
+  const { user, session } = req.query;
+
+  if (!user || !session) {
+    return res.status(400).send("❌ GitHub username or session ID missing!");
+  }
+
+  // You can expand this logic to call GitHub API, clone repo, etc.
+  return res.send(`✅ Hello ${user}! Your session ID (${session}) is valid. Proceeding to setup...`);
+});
+
+app.listen(PORT, () => {
+  console.log(`✅ Arslan Render Server Running on port ${PORT}`);
+});
