@@ -1,69 +1,32 @@
 // server.js
-import express from "express";
-import bodyParser from "body-parser";
-import dotenv from "dotenv";
-import axios from "axios";
+const express = require('express');
+const bodyParser = require('body-parser');
+const fs = require('fs');
+const { exec } = require('child_process');
+const path = require('path');
 
-dotenv.config();
 const app = express();
-app.use(bodyParser.json());
+const PORT = process.env.PORT || 3000;
 
-const RENDER_API_KEY = process.env.RENDER_API_KEY;
-const RENDER_OWNER_ID = process.env.RENDER_OWNER_ID; // Must be correct!
+app.use(bodyParser.urlencoded({ extended: true }));
 
-app.post("/deploy", async (req, res) => {
-  const { username, session_id } = req.body;
-
-  if (!username || !session_id) {
-    return res.status(400).json({ error: "Missing username or session_id" });
-  }
-
-  try {
-    const response = await axios.post(
-      "https://api.render.com/v1/services",
-      {
-        name: `arslan-bot-${username}`,
-        type: "web",
-        repo: {
-          url: `https://github.com/${username}/Arslan_MD`,
-          branch: "main"
-        },
-        env: "node",
-        buildCommand: "npm install",
-        startCommand: "node index.js",
-        plan: "starter",
-        region: "oregon",
-        envVars: [
-          { key: "SESSION_ID", value: session_id },
-          { key: "PORT", value: "10000" } // optional if needed
-        ],
-        autoDeploy: true,
-        ownerId: RENDER_OWNER_ID
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${RENDER_API_KEY}`,
-          "Content-Type": "application/json"
-        }
-      }
-    );
-
-    return res.json({
-      success: true,
-      message: "✅ Bot deployment started on Render!",
-      service_id: response.data.id,
-      dashboard_url: `https://dashboard.render.com/web/${response.data.id}`
-    });
-  } catch (err) {
-    console.error("❌ Deployment error:", err.response?.data || err.message);
-    return res.status(500).json({
-      error: "Failed to deploy bot",
-      detail: err.response?.data || err.message
-    });
-  }
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-const PORT = process.env.PORT || 3000;
+app.post('/deploy', (req, res) => {
+  const sessionId = req.body.session;
+
+  if (!sessionId.startsWith("ARSL~")) {
+    return res.send("❌ Invalid SESSION_ID format. Must start with ARSL~");
+  }
+
+  const appName = `arslan-md-${Date.now()}`;
+  const herokuApp = `https://dashboard.heroku.com/new?template=https://github.com/ArslanMD/Arslan_MD/&env[SESSION_ID]=${encodeURIComponent(sessionId)}&env[APP_NAME]=${appName}`;
+
+  res.redirect(herokuApp);
+});
+
 app.listen(PORT, () => {
-  console.log(`🚀 Render Deploy Server running on port ${PORT}`);
+  console.log(`✅ Server started at http://localhost:${PORT}`);
 });
