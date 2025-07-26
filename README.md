@@ -1,8 +1,15 @@
-# Arslan-MD Bot Hosting
+# Arslan_MD Hosting 🔥
 
-Use this site to deploy your Arslan-MD WhatsApp bot with your session ID.
+Deploy your own Arslan-Ai WhatsApp bot for free using Heroku!
 
-## Steps:
-1. Fork [Arslan-MD Bot](https://github.com/Arslan-MD/Arslan_MD)
-2. Paste your GitHub username + SESSION_ID
-3. Deploy to Render automatically!
+## 🚀 Deploy Now
+
+Click the button below 👇  
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://dashboard.heroku.com/new?template=https://github.com/ArslanMDOfficialByTesting/arslan-md-hosting)
+
+## 📋 Instructions
+
+1. Paste your `SESSION_ID` starting with `ARSL~` in the input box.
+2. Click **Deploy**.
+3. Wait 1–2 minutes. Your bot will be up on Heroku.
+4. Check logs to confirm:
