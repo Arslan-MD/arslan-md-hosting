@@ -1,0 +1,24 @@
+{
+  "name": "Arslan-MD Hosting",
+  "description": "Deploy Arslan-Ai-2.0 WhatsApp Bot with your SESSION_ID",
+  "repository": "https://github.com/ArslanMD/Arslan_MD",
+  "keywords": ["whatsapp", "bot", "arslan", "baileys"],
+  "env": {
+    "SESSION_ID": {
+      "description": "Paste your ARSL~ session ID here",
+      "required": true
+    },
+    "APP_NAME": {
+      "description": "App name (auto-generated)",
+      "required": false
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    },
+    {
+      "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git"
+    }
+  ]
+}
