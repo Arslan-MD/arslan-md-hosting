@@ -1,63 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Deploy Arslan-MD Bot</title>
+  <meta charset="UTF-8">
+  <title>Arslan-MD Hosting</title>
   <style>
-    body {
-      font-family: Arial;
-      max-width: 400px;
-      margin: 80px auto;
-      text-align: center;
-    }
-    input {
+    body { font-family: sans-serif; background: #f7f7f7; padding: 20px; }
+    h1 { color: #333; }
+    input, button {
       padding: 10px;
-      margin: 10px;
-      width: 90%;
-    }
-    button {
-      padding: 10px 20px;
-      background-color: green;
-      color: white;
-      border: none;
-    }
-    a {
-      display: block;
-      margin-top: 20px;
-      font-weight: bold;
+      margin: 10px 0;
+      width: 100%;
+      max-width: 300px;
     }
   </style>
 </head>
 <body>
-  <h2>Deploy Your Arslan-MD Bot</h2>
-  <input id="username" placeholder="GitHub Username" />
-  <input id="session" placeholder="Your SESSION_ID" />
-  <button onclick="deploy()">Verify & Deploy</button>
-  <p id="result"></p>
+  <h1>🚀 Deploy Arslan-MD Bot</h1>
+  <form action="/verify" method="GET">
+    <label for="user">Your GitHub Username:</label><br>
+    <input type="text" id="user" name="user" placeholder="e.g. ArslanMDOfficial" required><br>
 
-  <script>
-    async function deploy() {
-      const username = document.getElementById("username").value.trim();
-      const session = document.getElementById("session").value.trim();
+    <label for="session">Your SESSION_ID:</label><br>
+    <input type="text" id="session" name="session" placeholder="e.g. ARSL~xxxxxxxx" required><br>
 
-      if (!username || !session) {
-        document.getElementById("result").innerText = "⚠️ Please enter both fields!";
-        return;
-      }
-
-      const res = await fetch("https://arslan-md-hosting-free-vps.onrender.com/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ githubUsername: username, sessionId: session })
-      });
-
-      const data = await res.json();
-      if (data.deploy_link) {
-        document.getElementById("result").innerHTML =
-          `<a href="${data.deploy_link}" target="_blank">🚀 Click to Deploy</a>`;
-      } else {
-        document.getElementById("result").innerText = data.error || "❌ Unknown error.";
-      }
-    }
-  </script>
+    <button type="submit">Deploy</button>
+  </form>
 </body>
 </html>
