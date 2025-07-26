@@ -1,68 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
   <title>Deploy Arslan-MD Bot</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
+      font-family: Arial;
+      max-width: 400px;
+      margin: 80px auto;
+      text-align: center;
     }
-
-    h2 {
-      margin-bottom: 20px;
-      color: #38bdf8;
-    }
-
     input {
       padding: 10px;
-      width: 300px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 8px;
-      outline: none;
-      font-size: 16px;
+      margin: 10px;
+      width: 90%;
     }
-
     button {
       padding: 10px 20px;
-      background-color: #22c55e;
-      border: none;
-      border-radius: 8px;
+      background-color: green;
       color: white;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.3s ease;
+      border: none;
     }
-
-    button:hover {
-      background-color: #16a34a;
-    }
-
-    #result {
-      margin-top: 20px;
-      font-size: 16px;
-      color: #facc15;
-    }
-
     a {
-      color: #4ade80;
+      display: block;
+      margin-top: 20px;
       font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <h2>🚀 Deploy Your Arslan-MD Bot</h2>
-  <input id="username" placeholder="🔑 GitHub Username" />
-  <input id="session" placeholder="🔐 Your SESSION_ID" />
-  <button onclick="deploy()">✅ Verify & Deploy</button>
+  <h2>Deploy Your Arslan-MD Bot</h2>
+  <input id="username" placeholder="GitHub Username" />
+  <input id="session" placeholder="Your SESSION_ID" />
+  <button onclick="deploy()">Verify & Deploy</button>
   <p id="result"></p>
 
   <script>
@@ -71,11 +40,11 @@
       const session = document.getElementById("session").value.trim();
 
       if (!username || !session) {
-        document.getElementById("result").innerText = "❌ Please fill in both fields.";
+        document.getElementById("result").innerText = "⚠️ Please enter both fields!";
         return;
       }
 
-      const res = await fetch("https://arslan-render-server.onrender.com/verify", {
+      const res = await fetch("https://arslan-md-hosting-free-vps.onrender.com/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ githubUsername: username, sessionId: session })
@@ -84,9 +53,9 @@
       const data = await res.json();
       if (data.deploy_link) {
         document.getElementById("result").innerHTML =
-          `<a href="${data.deploy_link}" target="_blank">🚀 Click here to Deploy Bot</a>`;
+          `<a href="${data.deploy_link}" target="_blank">🚀 Click to Deploy</a>`;
       } else {
-        document.getElementById("result").innerText = data.error || "❌ Unknown error occurred.";
+        document.getElementById("result").innerText = data.error || "❌ Unknown error.";
       }
     }
   </script>
