@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ArslanMD Hosting</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      cursor: pointer;
+    }
+    #response {
+      margin-top: 20px;
+      color: #0f0;
+    }
+  </style>
+</head>
+<body>
+  <h1>🤖 ArslanMD Bot Hosting</h1>
+  <p>Enter your GitHub username and session ID to start your bot:</p>
+  
+  <input type="text" id="username" placeholder="GitHub Username" />
+  <input type="text" id="session" placeholder="Session ID (ARSL~...)" />
+  <button onclick="submitForm()">Submit</button>
+
+  <div id="response"></div>
+
+  <script>
+    async function submitForm() {
+      const username = document.getElementById("username").value.trim();
+      const session = document.getElementById("session").value.trim();
+      const responseDiv = document.getElementById("response");
+
+      if (!username || !session) {
+        return responseDiv.innerText = "⚠️ Please fill both fields.";
+      }
+
+      responseDiv.innerText = "⏳ Verifying fork...";
+
+      const res = await fetch("/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, session })
+      });
+
+      const data = await res.json();
+      responseDiv.innerText = data.message;
+    }
+  </script>
+</body>
+</html>
