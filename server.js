@@ -1,15 +1,15 @@
-// deploy.js
-import axios from "axios";
+// server.js
 import express from "express";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
-dotenv.config();
+import axios from "axios";
 
+dotenv.config();
 const app = express();
 app.use(bodyParser.json());
 
 const RENDER_API_KEY = process.env.RENDER_API_KEY;
-const OWNER_ID = process.env.RENDER_OWNER_ID || "user-xxxxxxxx"; // Replace with your default
+const RENDER_OWNER_ID = process.env.RENDER_OWNER_ID; // Must be correct!
 
 app.post("/deploy", async (req, res) => {
   const { username, session_id } = req.body;
@@ -18,33 +18,27 @@ app.post("/deploy", async (req, res) => {
     return res.status(400).json({ error: "Missing username or session_id" });
   }
 
-  const repo = `${username}/arslan-md-hosting`;
-
   try {
     const response = await axios.post(
       "https://api.render.com/v1/services",
       {
-        service: {
-          name: `arslan-bot-${username}`,
-          type: "web",
-          repo: {
-            repoId: repo,
-            repoBranch: "main",
-            autoDeploy: true,
-            buildCommand: "npm install",
-            startCommand: "npm start"
-          },
-          env: "node",
-          envVars: [
-            {
-              key: "SESSION_ID",
-              value: session_id
-            }
-          ],
-          region: "oregon",
-          plan: "starter"
+        name: `arslan-bot-${username}`,
+        type: "web",
+        repo: {
+          url: `https://github.com/${username}/Arslan_MD`,
+          branch: "main"
         },
-        ownerId: OWNER_ID
+        env: "node",
+        buildCommand: "npm install",
+        startCommand: "node index.js",
+        plan: "starter",
+        region: "oregon",
+        envVars: [
+          { key: "SESSION_ID", value: session_id },
+          { key: "PORT", value: "10000" } // optional if needed
+        ],
+        autoDeploy: true,
+        ownerId: RENDER_OWNER_ID
       },
       {
         headers: {
@@ -56,14 +50,15 @@ app.post("/deploy", async (req, res) => {
 
     return res.json({
       success: true,
-      message: "✅ Bot is deploying on Render!",
-      render_service: response.data.service,
+      message: "✅ Bot deployment started on Render!",
+      service_id: response.data.id,
+      dashboard_url: `https://dashboard.render.com/web/${response.data.id}`
     });
   } catch (err) {
     console.error("❌ Deployment error:", err.response?.data || err.message);
     return res.status(500).json({
       error: "Failed to deploy bot",
-      detail: err.response?.data || err.message,
+      detail: err.response?.data || err.message
     });
   }
 });
