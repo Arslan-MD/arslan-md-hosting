@@ -1,37 +1,36 @@
 const express = require("express");
+const cors = require("cors");
 const axios = require("axios");
-const path = require("path");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-
-app.use(express.static("public"));
+app.use(cors());
 app.use(express.json());
 
-// POST /verify
 app.post("/verify", async (req, res) => {
-  const { username, session } = req.body;
+  const { githubUsername, sessionId } = req.body;
 
-  if (!username || !session || !session.startsWith("ARSL~")) {
-    return res.json({ message: "❌ Invalid input!" });
-  }
+  if (!githubUsername || !sessionId)
+    return res.json({ error: "Missing username or SESSION_ID." });
+
+  if (!sessionId.startsWith("ARSL~"))
+    return res.json({ error: "Invalid SESSION_ID format." });
 
   try {
-    const repo = "Arslan-MD/Arslan_MD";
-    const url = `https://api.github.com/repos/${username}/Arslan_MD`;
+    const repoUrl = `https://api.github.com/repos/${githubUsername}/Arslan_MD`;
+    const response = await axios.get(repoUrl);
 
-    const githubRes = await axios.get(url);
-    if (githubRes.data?.fork === true && githubRes.data?.parent?.full_name === repo) {
-      // Success
-      return res.json({ message: `✅ Verified! Bot will be activated for @${username}.` });
-    } else {
-      return res.json({ message: "❌ Repo not forked properly!" });
+    if (response.status === 200) {
+      const deploy_link = `https://render.com/deploy?repo=https://github.com/${githubUsername}/Arslan_MD&SESSION_ID=${sessionId}`;
+      return res.json({ deploy_link });
     }
-  } catch (err) {
-    return res.json({ message: "❌ GitHub user or repo not found!" });
+  } catch (e) {
+    return res.json({ error: "GitHub repo not found or not public." });
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
+app.get("/", (req, res) => {
+  res.send("Arslan Render Server Running ✅");
 });
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log("✅ Server running on port", PORT));
