@@ -1,106 +1,15 @@
+<!-- index.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🚀 Arslan-MD Hosting Panel</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Orbitron', sans-serif;
-      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-    }
-
-    .form-container {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 30px;
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
-      width: 90%;
-      max-width: 400px;
-    }
-
-    input, button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      border-radius: 10px;
-      border: none;
-      font-size: 1rem;
-      font-family: 'Orbitron', sans-serif;
-    }
-
-    input {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-    }
-
-    button {
-      background: #00d4ff;
-      color: #000;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    button:hover {
-      background: #00aacc;
-    }
-
-    #result {
-      margin-top: 20px;
-      font-size: 1rem;
-    }
-
-    .glow {
-      color: #0ff;
-      text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
-    }
-  </style>
+  <title>Deploy Arslan_MD Bot</title>
 </head>
-<body>
-  <h1 class="glow">⚙️ Arslan-MD Free VPS Panel</h1>
-  <div class="form-container">
-    <input type="text" id="username" placeholder="GitHub Username (e.g. ArslanMD)" />
-    <input type="text" id="session" placeholder="Session ID (Starts with ARSL~)" />
-    <button onclick="verify()">🚀 Launch My Bot</button>
-    <div id="result"></div>
-  </div>
-
-  <script>
-    async function verify() {
-      const username = document.getElementById("username").value.trim();
-      const session = document.getElementById("session").value.trim();
-      const result = document.getElementById("result");
-
-      if (!username || !session) {
-        result.innerHTML = "❌ Please fill in all fields!";
-        return;
-      }
-
-      result.innerHTML = "⏳ Verifying your session...";
-
-      try {
-        const res = await fetch(`/verify?username=${encodeURIComponent(username)}&session=${encodeURIComponent(session)}`);
-        const text = await res.text();
-        result.innerHTML = `✅ ${text}`;
-      } catch (err) {
-        result.innerHTML = "❌ Failed to connect to server!";
-      }
-    }
-  </script>
+<body style="font-family: Arial; text-align: center; padding-top: 50px;">
+  <h1>🚀 Deploy Your Arslan_MD Bot</h1>
+  <form action="/deploy" method="POST">
+    <label for="session">Paste Your SESSION_ID:</label><br><br>
+    <input type="text" id="session" name="session" required style="width: 300px;"><br><br>
+    <button type="submit">Deploy to Heroku</button>
+  </form>
 </body>
 </html>
