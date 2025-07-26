@@ -1,35 +1,37 @@
-const express = require('express');
-const axios = require('axios');
-const bodyParser = require('body-parser');
-const cors = require('cors');
+const express = require("express");
+const axios = require("axios");
+const path = require("path");
 
 const app = express();
-app.use(cors());
-app.use(bodyParser.json());
+const PORT = process.env.PORT || 3000;
 
-const BASE_REPO = "Arslan-MD/Arslan_MD";
+app.use(express.static("public"));
+app.use(express.json());
 
+// POST /verify
 app.post("/verify", async (req, res) => {
-  const { githubUsername, sessionId } = req.body;
-  if (!githubUsername || !sessionId)
-    return res.status(400).json({ error: "Missing data" });
+  const { username, session } = req.body;
 
-  // Check if user has forked
-  const url = `https://api.github.com/repos/${githubUsername}/Arslan_MD`;
+  if (!username || !session || !session.startsWith("ARSL~")) {
+    return res.json({ message: "❌ Invalid input!" });
+  }
+
   try {
-    await axios.get(url);
+    const repo = "Arslan-MD/Arslan_MD";
+    const url = `https://api.github.com/repos/${username}/Arslan_MD`;
 
-    const deployLink = `https://render.com/deploy?repo=https://github.com/${githubUsername}/Arslan_MD&env=SESSION_ID=${sessionId}`;
-
-    return res.json({
-      message: "✅ Repo verified!",
-      deploy_link: deployLink
-    });
-  } catch (e) {
-    return res.status(404).json({ error: "❌ Fork not found. Please fork first." });
+    const githubRes = await axios.get(url);
+    if (githubRes.data?.fork === true && githubRes.data?.parent?.full_name === repo) {
+      // Success
+      return res.json({ message: `✅ Verified! Bot will be activated for @${username}.` });
+    } else {
+      return res.json({ message: "❌ Repo not forked properly!" });
+    }
+  } catch (err) {
+    return res.json({ message: "❌ GitHub user or repo not found!" });
   }
 });
 
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
+app.listen(PORT, () => {
+  console.log(`✅ Server running on http://localhost:${PORT}`);
 });
